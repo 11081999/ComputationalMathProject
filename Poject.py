@@ -1,7 +1,9 @@
 
 #from graphviz import * as graph
-with open('test1.txt') as f:
-    first_line = f.readline()
+with open("test1.txt") as file_in:
+    lines = []
+    for line in file_in:
+        lines.append(line)
 
 
 
@@ -19,24 +21,22 @@ with open('test1.txt') as f:
 
 
 #Recoger valores de la primera fila del .txt y ordenarlos en un array (q0, q1, q2, q3)
-nodos= [0, 0 , 0]
 
-#set = [0 for i in range(1, int(input1) + 1)]
+totalNodes= len(lines[0])/3
+print("\n Number of Nodes: " + str(totalNodes))
+#nodes= [0 for i in range(0, int(totalNodes))]
 
-print(len(first_line))
-
-nodos * 4 = 12
-
-nodos[0]= (first_line[0] + first_line[1])
-
-
-print(nodos)
+nodes= lines[0].split(',')
+print("\n Nodes: ")
+print(nodes)
 
 #Recoger los valroes de la segunda fila del .txt y agregarlos a un array (a,b)
-#valores= []
+valores= lines[1].split(',')
+print("\n Second line: ")
+print(valores)
 
 #Declarar la variable del estado inicial
-#init= "la linea tres del .txt"
+initialState= lines[2]
 
 #Dclarar los lygares en donde es estado final
 #final= []
