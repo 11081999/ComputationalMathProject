@@ -1,7 +1,7 @@
-q0,q1,q2,q3,q4,q5,q6,q7
+Q0,Q1,Q2,Q3,Q4,Q5,Q6,Q7
 a,b
-q0
-q0,q5
+Q0
+Q0,Q5
 Q0 FINAL A=>Q6 B=>Q5
 Q1 NOFINAL A=>Q1 B=>Q0
 Q2 NOFINAL A=>Q3 B=>Q6
