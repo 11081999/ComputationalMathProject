@@ -1,4 +1,7 @@
 """
+Roberto Rivera Terán    - A00369870
+Karla Paola García      - A01655768
+
     IMPORTANT__ in order to run program
 
     import texttable
