@@ -1,4 +1,21 @@
 """
+    IMPORTANT__ in order to run program
+
+    import texttable
+    import numpy
+
+    ! test file should be addressed at line 36
+
+    ! TRANSITION TABLE at line 172
+
+    ! MINIMIZATION at line at 254
+
+    ! VALIDATE STRING at 303
+
+    ! Input to validate in DFA should always remain a string without spaces
+
+"""
+"""
     Texttable is a library that helps visualize the minimized table
     in a friendly format to the eyes.
 """
@@ -25,7 +42,7 @@ np.set_printoptions(suppress=True)
 """
     This process opens the designated file and orders every line in an array
 """
-originalFile = "test1.txt"
+originalFile = "test2.txt"
 with open(originalFile) as file_in:
     lines = []                      #This array will store every line of the file in thir own index, in order.
     for line in file_in:
@@ -316,9 +333,15 @@ def testStringInDFA(start, string, char):
     testStringInDFA(nextNode, string, char+1)
 
 
-print("Introcude a tring to evaluate")
-#inputString= str(input())
-inputString= "abab"
+"""
+    Se espera que cualquier lector competente del tema pueda descomentar el inputString y comentar el que recive un input
+    par aprovar la funcianalidad del metodo testStringInDFA()
+"""
+print("Introcude a string to evaluate")
+##Ask for input as a string
+inputString= str(input())
+#inputString= "abab"
+#Evaluate Strinf Input
 testStringInDFA(str(initialState), inputString, 0)
 
 
