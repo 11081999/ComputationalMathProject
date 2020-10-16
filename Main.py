@@ -83,12 +83,20 @@ print(finalStates)
 rows, cols = (len(nodes)+1, len(valores)+1)
 table = [[0 for i in range(cols)] for j in range(rows)]
 
+"""
+    This process Dinamically fills the top row of the transition table
+"""
 for i in range(0, len(valores)+1):
     if i == 0:
         table[0][i]= "QN"
     else:
         table[0][i]= valores[i-1]
 
+"""
+    This function recieves a node in order to determine how many nodes of the same type are in the text file
+    This serves in the second loop in order for it to repeat as many times as the nodes repeat int the .txt file,
+    this makes for an autonomus way to look for information on the same node and store it on the table
+"""
 def contarNodos(nodo):
     counter= 0
     for i in range(4, len(lines)):
@@ -98,6 +106,15 @@ def contarNodos(nodo):
             counter += 1
     return counter
 
+"""
+    This function recieves a node and a jump, the jump referes to the iteration on the loop it is called from and this value
+    represents the number of times the same node has been found in the .txt file. For example if whe have q0 pointing to a on
+    one line and on the next one q0 poitning to b then if we already catalogued q0 goes to a in our transition table then
+    the program "jumps" to the next q0. If we have already worked with all the nodes of one type in all lines we return "null"
+    
+    --Observation-- The "jumps" is the j value on the second loop when filling the table, this value is also the result given by contarNodos()
+    
+"""
 def findLine(node, jumps):
     counter= 1
     for i in range(4, len(lines)):
@@ -111,12 +128,29 @@ def findLine(node, jumps):
 
     return "null"
 
+
+"""
+    This function checks if the given node is final. This need to be taken into consideration when trying to merge rows
+    at the step of minimization
+
+"""
 def isFinal(node):
     if node in finalStates:
         return True
 
-tableSpot= 1
-#nodesBlackList= [0 for i in range(0, len(nodes))]
+"""
+    The following proceses will at last build the transition table. The way of doing this is by keeping track on the row
+    of the table we are in -tableSpot- and also keeping track of the nodes we have already filled, if we have then add
+    them to the -nodesBlackList-. The nodes and values to add in the table are taken directly from the array of -lines-
+    it mjust be notet that the scann of the prccess starts at line 4 and ends an the end of the array of -lines-.
+    
+    On the first loop the task is to iterate each line and get the node in question, if the node has not been already 
+    worked with then we add it to the blacklist and move on to the second loop
+    
+    On the second loop  
+    
+"""
+tableSpot= 1         #--Observation-- tableSpot starts at 1 because the first row and column are to display te main nodes and values
 nodesBlackList= []
 for i in range(4, len(lines)):
     currentLine = lines[i].split(',')
@@ -147,9 +181,6 @@ for i in range(4, len(lines)):
 
 #print("\n BlackList: ")
 #print(nodesBlackList)
-
-#print("\n Transition table 1: ")
-#print(table)
 print("\n Transition table (ORIGINAL): ")
 print(table)
 
@@ -261,8 +292,8 @@ def testStringInDFA(start, string, char):
 
 
 print("Introcude a tring to evaluate")
-inputString= str(input())
-#inputString= "abab"
+#inputString= str(input())
+inputString= "abab"
 testStringInDFA(initialState, inputString, 0)
 
 
