@@ -25,7 +25,7 @@ np.set_printoptions(suppress=True)
 """
     This process opens the designated file and orders every line in an array
 """
-originalFile = "test2.txt"
+originalFile = "test1.txt"
 with open(originalFile) as file_in:
     lines = []                      #This array will store every line of the file in thir own index, in order.
     for line in file_in:
@@ -58,6 +58,7 @@ print("\n Nodes: ")
 print(nodes)
 
 #This variable stores the values on the second line of the .txt file, these are the possbile values a node can evaluate
+#--Observation-- values must be remembered as where the node is pointing to
 valores= lines[1].split(',')
 print("\n Valores: ")
 print(valores)
@@ -147,7 +148,12 @@ def isFinal(node):
     On the first loop the task is to iterate each line and get the node in question, if the node has not been already 
     worked with then we add it to the blacklist and move on to the second loop
     
-    On the second loop  
+    On the second loop we get the line of the node we are working with and assing the values it had on that line, we then
+    look for other lines with information on the same node in order to determine if it has more values. 
+    All the valid values will be stored in order. 
+    
+    --Observation-- On the second iteration we assume the arr -values- are in order as well as the values readed by findLine()
+                    and are coincidentally the same based on the given format for test.2 and test.1
     
 """
 tableSpot= 1         #--Observation-- tableSpot starts at 1 because the first row and column are to display te main nodes and values
@@ -161,19 +167,20 @@ for i in range(4, len(lines)):
         table[tableSpot][0]= currentNode
         for j in range(1, contarNodos(currentNode)+1):
             if findLine(currentNode, j) != "null":
-
                 #print(findLine(currentNode, j))
                 #print(j)
-
                 currentLine= findLine(currentNode, j)
                 #Node
                 lineNode  = currentLine[0]
-                #
+                #Values of the node (where the node is pointing to)
                 lineValuePointer = currentLine[1]
-                #
-                value = lineValuePointer[3: len(lineValuePointer)]
+
+
+                # --Observation-- at this point the string of value is still in the form of "b=>q6"
+                value = lineValuePointer[3: len(lineValuePointer)] #the index here refers to the substring from the position 3 to the end of the same string.
                 direction= lineValuePointer[0]
 
+                # Dinamically save the value on the next spot -tableSpot-
                 table[tableSpot][table[0].index(direction)] = str(value)
 
         if tableSpot < len(nodes):
@@ -181,10 +188,12 @@ for i in range(4, len(lines)):
 
 #print("\n BlackList: ")
 #print(nodesBlackList)
-print("\n Transition table (ORIGINAL): ")
-print(table)
+#print("\n Transition table (ORIGINAL): ")
+#print(table)
 
-#De la tabla de transicion buscar valores exactamente iguales (por fila) de los nodos y los valores
+"""
+    This function looks for duplicate rows on the the transition table, it returns every row that is duplicate even if the pairs are different between eachother
+"""
 def findDuplicateRowsOnTable():
     rowsBlackList= []
     for i in range(1, len(table)):
@@ -199,6 +208,10 @@ def findDuplicateRowsOnTable():
     print("BL")
     print(rowsBlackList)
 
+"""
+    This function unlike the latter, looks for duplicate rows of the same type. And returns the repeated rows except the
+    first one that was found. The remaining will later be erased from the table.
+"""
 def getRowsSameTye(row):
     messsage = "Duplicate of row "+str(row)
     masterRow=  np.array(table[row][1:len(nodes)])
@@ -207,15 +220,22 @@ def getRowsSameTye(row):
     for i in range(1, len(table)):
         subRow= np.array(table[i][1:len(nodes)])
 
-        #Take into consideration final states & also change final states
+        #--WARNING!--   Take into consideration final states & also change final states
+        #               Wich currently are not taken into consideration
         if (masterRow==subRow).all() and row != i:
             messsage+= " at "+str(i)
             rowtypes.append(i)
     print(messsage)
     return rowtypes
 
-
-
+"""
+    This function will minimize the transition table only once, in case of having more roes it should be called again
+    The function determines the duplicate rows, and then determines of those witch ones are the same.
+    Then, it determines a new symbol to replace the duplicated rows and also calculates the nodes it needs to replace;
+    this is so we can delete one of the duplicated rows. 
+    for this, it loops though the whole table and replaces the old nodes for the new ones. 
+    Always, the values it will replace in the table will be the node on the first column
+"""
 def minimize():
     print("-------------------------")
     duplicateRows = findDuplicateRowsOnTable()
@@ -231,6 +251,7 @@ def minimize():
         print("Symbol:")
         print(minimizationSymbol)
 
+        #The idea here is to automatically assign values, but works for the scope of a,b
         targetToReplace = []
         targetToReplace.append(table[rowType[0]][0])
         targetToReplace.append(table[rowType[1]][0])
@@ -238,7 +259,7 @@ def minimize():
         print(targetToReplace)
 
         for i in range(1, len(rowType)):
-            #Should be careful no to delete any initial states
+            #--WARNING!-- Should be careful no to delete any initial states
             del table[rowType[i]]
 
         for i in range(0, len(table)):
@@ -248,6 +269,7 @@ def minimize():
                         table[i][j] = minimizationSymbol
 
 
+#We hardcode call minimze twice but in reality it shiuld be auromated to call every time it detects anoder duplicate row
 minimize()
 minimize()
 
@@ -255,15 +277,23 @@ print("\n Transition table (MINIMIZED): ")
 t.add_rows(table)
 print(t.draw())
 
-#def testCharDFA(start):
-
-
+"""
+    This function will test via a recursion if a string belongs to a DFA. In recieves a node to start from, the string
+    to evaluate and a number wich wil represent the current position of the string.
+    The recursion will then take the next node of the current tecursion as the strating node of th enext recursion. The
+    next node is determied by consulting the minimized DFA. 
+    The recursion wil end if the char reaches the length of the string, menaing that we have analized every character.
+    Or if we are still analyzing and we reach a node without a value then exit immediatly.  
+"""
 def testStringInDFA(start, string, char):
     if(len(string) == char):
         if start in finalStates:
-            return print("The string belong in the DFA")
+            return print("\n The string belong in the DFA")
         else:
-            return print("The string des not belong in the DFA")
+            return print("\n The string des not belong in the DFA")
+
+    if start == 0:
+        return print("\n The string des not belong in the DFA")
 
     columnNodes=[]
     for i in range(1, len(table)):
@@ -272,7 +302,7 @@ def testStringInDFA(start, string, char):
     print("-------------------------")
     #startNode
     print("Current Node: ")
-    print(str(start))
+    print(start)
     nodeBranches= table[(columnNodes).index(start)+1][1:len(nodes)]
     print("Node Branches: ")
     print(nodeBranches)
@@ -285,16 +315,11 @@ def testStringInDFA(start, string, char):
 
     testStringInDFA(nextNode, string, char+1)
 
-    #for ch in range(0, len(string)):
-        #if start in table[i+1][1:len(nodes)]:
-
-
-
 
 print("Introcude a tring to evaluate")
 #inputString= str(input())
 inputString= "abab"
-testStringInDFA(initialState, inputString, 0)
+testStringInDFA(str(initialState), inputString, 0)
 
 
 
