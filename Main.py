@@ -1,43 +1,85 @@
+"""
+    Texttable is a library that helps visualize the minimized table
+    in a friendly format to the eyes.
+"""
 from texttable import Texttable
-t = Texttable()
-t2 = Texttable()
+t = Texttable() #t will be the reference to the library texttable
 
+
+#For some reason sometime Numpy fails to download in pycharm so as an alternative you can highlight the path in you files
+#--WARNING!-- If this is NOT the case for you then comment!
 import sys
 sys.path.append(r"C:\Users\Roberto\AppData\Local\Programs\Python\Python38-32\Lib\site-packages")
+"""
+    Nunpy is a library that helps to compare and organize arrays in order
+    to save procesess. 
+"""
 import numpy as np
 np.set_printoptions(suppress=True)
 
-
-
+"""
+    Graphiz could help to print in a graphic interface the DFA
+"""
 #from graphviz import * as graph
+
+"""
+    This process opens the designated file and orders every line in an array
+"""
 originalFile = "test2.txt"
 with open(originalFile) as file_in:
-    lines = []
+    lines = []                      #This array will store every line of the file in thir own index, in order.
     for line in file_in:
-        line = line.rstrip()
+        line = line.rstrip()        #Sometimes the end of the line will keep a "\n" so this code removes it because it affects comparisons
         lines.append(line)
 
-#Recoger valores de la primera fila del .txt y ordenarlos en un array (q0, q1, q2, q3)
-nodes= lines[0].split(',')
+"""
+    OBJECTIVE:
+    Makeaprogram  that  reads  from  a  file the  elements  that  define  an DFAand buildsthe equivalent minimized DFA.
+    Also, the program should say if a string is accepted or not by any DFA
+"""
+"""  
+    The following assignations represent the "data gathering" according to the activiy, it goes as follows:
+    -The first lineindicatesthe set of states of the automataseparatedby commas.
+    -The second line indicates the alphabet symbols separated by commas
+    -The third line indicates the initial state
+    -The fourth line indicates the set of final states separated by commas.
+    
+    -Thefollowing  lines  indicate  the  evaluation  of  the  extended  transition  function  with  
+    the elements of the alphabetin the following format:
+    
+    state,symbol = > state
+    
+    Eg. q0, a = > q1
+    
+"""
+#This variable stores the values on the first line of the .txt file, these are the nodes
+nodes= lines[0].split(',') #--Observation-- the .split() function return an array with every index being what was beside the parameter
 print("\n Nodes: ")
 print(nodes)
 
-#Recoger los valroes de la segunda fila del .txt y agregarlos a un array (a,b)
+#This variable stores the values on the second line of the .txt file, these are the possbile values a node can evaluate
 valores= lines[1].split(',')
 print("\n Valores: ")
 print(valores)
 
-#Declarar la variable del estado inicial
+#This variable stores the values on the third line of the .txt file, these are the possbile initial states
 initialState= lines[2]
 print("\n Initial State: ")
 print(initialState)
 
-#Dclarar los lygares en donde es estado final
+#This variable stores the values on the third line of the .txt file, these are the final states
 finalStates= lines[3].split(',')
 print("\n Estados Finales: ")
 print(finalStates)
 
-#Make transition table basado en los valores de la quinta linea hasta n
+"""
+    The following proceses will take on the task of building the transition table based on the data gathered and
+    The instructions of this activity. For this well purely muse array manipulation although an alternative would be
+    to use dicctionaries. The porblem was tackled with 1D and 2D arrays because even if we use dicctionaries a table
+    must be built up in order to minimize and evaluate atrings.
+"""
+
+#Dinamically fill 2D array wich will be the transition
 rows, cols = (len(nodes)+1, len(valores)+1)
 table = [[0 for i in range(cols)] for j in range(rows)]
 
