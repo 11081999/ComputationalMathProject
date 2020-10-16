@@ -7,8 +7,10 @@ sys.path.append(r"C:\Users\Roberto\AppData\Local\Programs\Python\Python38-32\Lib
 import numpy as np
 np.set_printoptions(suppress=True)
 
+
+
 #from graphviz import * as graph
-originalFile = "test1.txt"
+originalFile = "test2.txt"
 with open(originalFile) as file_in:
     lines = []
     for line in file_in:
@@ -106,9 +108,8 @@ for i in range(4, len(lines)):
 
 #print("\n Transition table 1: ")
 #print(table)
-print("\n Transition table (OG): ")
-t.add_rows(table)
-print(t.draw())
+print("\n Transition table (ORIGINAL): ")
+print(table)
 
 #De la tabla de transicion buscar valores exactamente iguales (por fila) de los nodos y los valores
 def findDuplicateRowsOnTable():
@@ -118,6 +119,7 @@ def findDuplicateRowsOnTable():
         for j in range(1, len(table)):
             subRow= np.array(table[j][1:len(nodes)])
             if (masterRow==subRow).all() and i != j:
+
                 print("Found Duplicate at row: "+ str(j))
                 rowsBlackList.append(j)
     return rowsBlackList
@@ -131,6 +133,8 @@ def getRowsSameTye(row):
     rowtypes.append(row)
     for i in range(1, len(table)):
         subRow= np.array(table[i][1:len(nodes)])
+
+        #Take into consideration final states & also change final states
         if (masterRow==subRow).all() and row != i:
             messsage+= " at "+str(i)
             rowtypes.append(i)
@@ -140,10 +144,10 @@ def getRowsSameTye(row):
 
 
 def minimize():
+    print("-------------------------")
     duplicateRows = findDuplicateRowsOnTable()
 
     if not len(duplicateRows) <= 0:
-
         print("Duplicate Rows:")
         print(duplicateRows)
         rowType = getRowsSameTye(duplicateRows[0])
@@ -161,6 +165,7 @@ def minimize():
         print(targetToReplace)
 
         for i in range(1, len(rowType)):
+            #Should be careful no to delete any initial states
             del table[rowType[i]]
 
         for i in range(0, len(table)):
@@ -170,25 +175,57 @@ def minimize():
                         table[i][j] = minimizationSymbol
 
 
-
-
-
-    #table[len(table[0])].append()
-
-    #for a in range(0, len(table)):
-        #if
-
-
 minimize()
 minimize()
 
-print("\n Transition table (MIN): ")
-print(table)
+print("\n Transition table (MINIMIZED): ")
+t.add_rows(table)
+print(t.draw())
+
+#def testCharDFA(start):
+
+
+def testStringInDFA(start, string, char):
+    if(len(string) == char):
+        if start in finalStates:
+            return print("The string belong in the DFA")
+        else:
+            return print("The string des not belong in the DFA")
+
+    columnNodes=[]
+    for i in range(1, len(table)):
+        columnNodes.append(table[i][0])
+
+    print("-------------------------")
+    #startNode
+    print("Current Node: ")
+    print(str(start))
+    nodeBranches= table[(columnNodes).index(start)+1][1:len(nodes)]
+    print("Node Branches: ")
+    print(nodeBranches)
+
+    stringPath= ""
+    charPos= valores.index(string[char])
+    nextNode= nodeBranches[charPos]
+    stringPath += "process " + str(string[char]) + " Goes to " + str(nextNode)
+    print(stringPath)
+
+    testStringInDFA(nextNode, string, char+1)
+
+    #for ch in range(0, len(string)):
+        #if start in table[i+1][1:len(nodes)]:
+
+
+
+
+print("Introcude a tring to evaluate")
+inputString= str(input())
+#inputString= "abab"
+testStringInDFA(initialState, inputString, 0)
 
 
 
 
 
-#Pedir un input, y imprimir si ese imput (string) es aceptado por el DFA
 
-#De la tabla minimizada imprimir el arbol y poder pedir inut y decir si es aceptado por el DFA
+
