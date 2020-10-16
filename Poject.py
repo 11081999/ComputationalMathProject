@@ -84,8 +84,8 @@ for i in range(4, len(lines)):
         for j in range(1, contarNodos(currentNode)+1):
             if findLine(currentNode, j) != "null":
 
-                print(findLine(currentNode, j))
-                print(j)
+                #print(findLine(currentNode, j))
+                #print(j)
 
                 currentLine= findLine(currentNode, j)
                 #Node
@@ -110,33 +110,80 @@ print("\n Transition table (OG): ")
 t.add_rows(table)
 print(t.draw())
 
-def minimize(rowOne, i, rowTwo, j):
-    rowOneNode= table[0][i]
-    rowTwoNode= table[0][j]
+#De la tabla de transicion buscar valores exactamente iguales (por fila) de los nodos y los valores
+def findDuplicateRowsOnTable():
+    rowsBlackList= []
+    for i in range(1, len(table)):
+        masterRow=  np.array(table[i][1:len(nodes)])
+        for j in range(1, len(table)):
+            subRow= np.array(table[j][1:len(nodes)])
+            if (masterRow==subRow).all() and i != j:
+                print("Found Duplicate at row: "+ str(j))
+                rowsBlackList.append(j)
+    return rowsBlackList
+    print("BL")
+    print(rowsBlackList)
+
+def getRowsSameTye(row):
+    messsage = "Duplicate of row "+str(row)
+    masterRow=  np.array(table[row][1:len(nodes)])
+    rowtypes= []
+    rowtypes.append(row)
+    for i in range(1, len(table)):
+        subRow= np.array(table[i][1:len(nodes)])
+        if (masterRow==subRow).all() and row != i:
+            messsage+= " at "+str(i)
+            rowtypes.append(i)
+    print(messsage)
+    return rowtypes
+
+
+
+def minimize():
+    duplicateRows = findDuplicateRowsOnTable()
+
+    if not len(duplicateRows) <= 0:
+
+        print("Duplicate Rows:")
+        print(duplicateRows)
+        rowType = getRowsSameTye(duplicateRows[0])
+        print("Duplicate Rows Same Type:")
+        print(rowType)
+
+        minimizationSymbol = str(table[duplicateRows[0]][0]) + "M"
+        print("Symbol:")
+        print(minimizationSymbol)
+
+        targetToReplace = []
+        targetToReplace.append(table[rowType[0]][0])
+        targetToReplace.append(table[rowType[1]][0])
+        print("Replace:")
+        print(targetToReplace)
+
+        for i in range(1, len(rowType)):
+            del table[rowType[i]]
+
+        for i in range(0, len(table)):
+            for j in range(0, len(table[i])):
+                for z in range(0, len(targetToReplace)):
+                    if table[i][j] == targetToReplace[z]:
+                        table[i][j] = minimizationSymbol
+
+
+
+
+
+    #table[len(table[0])].append()
 
     #for a in range(0, len(table)):
         #if
 
-#De la tabla de transicion buscar valores exactamente iguales (por fila) de los nodos y los valores
-rowsBlackList= []
-for i in range(1, len(table)):
-    masterRow=  np.array(table[i][1:len(nodes)])
-    for j in range(1, len(table)):
-        print("-------j----------------")
-        subRow= np.array(table[j][1:len(nodes)])
-        if (masterRow==subRow).all() and i != j:
-            print("Found Duplicate at row: "+ str(j))
 
-            rowsBlackList.append(j)
+minimize()
+minimize()
 
-
-
-print("BL")
-print(rowsBlackList)
-
-#print("\n Transition table (MIN): ")
-#t2.add_rows(table)
-#print(t2.draw())
+print("\n Transition table (MIN): ")
+print(table)
 
 
 
@@ -145,64 +192,3 @@ print(rowsBlackList)
 #Pedir un input, y imprimir si ese imput (string) es aceptado por el DFA
 
 #De la tabla minimizada imprimir el arbol y poder pedir inut y decir si es aceptado por el DFA
-
-
-"""
-step= 4
-for i in range(0, len(nodes)):
-    currentLine = lines[step].split(',')
-    currentNode = currentLine[0]
-    table[i][0] = currentNode
-    step+= contarNodos(currentNode)
-
-step= 4
-for i in range(0, len(nodes)):
-    currentLine = lines[step].split(',')
-    currentNode   = currentLine[0]
-    currentrEntry = currentLine[1]
-    stringOne     = currentrEntry[0]
-    stringTwo     = currentrEntry[3: len(currentrEntry) - 1]
-    table[i][1] = str(stringOne) + ":" + str(stringTwo)
-    step += contarNodos(currentNode)
-
-step= 4
-for i in range(0, len(nodes)):
-    if (step < len(lines)-1):
-        currentLine = lines[step+1].split(',')
-        currentNode   = currentLine[0]
-        currentrEntry = currentLine[1]
-        stringOne     = currentrEntry[0]
-        stringTwo     = currentrEntry[3: len(currentrEntry) - 1]
-        table[i][2] = str(stringOne) + ":" + str(stringTwo)
-        step += contarNodos(currentNode)
-
-
-
-preveusNode = " "
-for i in range(0, 4):
-    currentLine   = lines[i + 4].split(',')
-    currentNode   = currentLine[0]
-    currentrEntry = currentLine[1]
-    stringOne     = currentrEntry[0]
-    stringTwo     = currentrEntry[3: len(currentrEntry) - 1]
-
-    table[i][0] = currentNode
-
-    for j in range(0, 3):
-
-
-        #if currentNode != preveusNode:
-            #table[i][j] = currentNode
-            #table[i][j] = str(stringOne) + ":" + str(stringTwo)
-
-        elif currentNode == preveusNode:
-            nextLine = lines[i + 4 + 1].split(',')
-            nextEntry = nextLine[1]
-            stringOne = nextEntry[0]
-            stringTwo = nextEntry[3: len(nextEntry) - 1]
-            table[i][j] = str(stringOne) + ":" + str(stringTwo)
-
-
-    preveusNode= currentNode
-
-"""
